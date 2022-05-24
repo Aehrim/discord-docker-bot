@@ -1,0 +1,20 @@
+version: '3.3'
+services:
+  discord:
+    build: .
+    container_name: discord-bot
+    restart: always
+    volumes:
+      - discord-bot:/usr/src/bot
+    networks:
+      - discord
+volumes:
+  discord-bot:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/discord-docker/src
+networks:
+  discord:
+    external: true
