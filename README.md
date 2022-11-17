@@ -1,4 +1,3 @@
-# Discord.py Bot
+# Discord.js Bot
 
-Kleiner Discord Bot geschrieben in Python mit Meme und Musik Funktionalität
-
+The Bot is now refactored in JS was Python before
