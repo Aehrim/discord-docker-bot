@@ -1,21 +1,21 @@
 import discord
 from discord.ext import commands
-from requests import get 
+from requests import get
 import json
 import youtube_dl
 import os
 import asyncio
-
 
 TOKEN = ""
 
 intents = discord.Intents().all()
 bot = commands.Bot(command_prefix="!")
 
+
 @bot.command()
-async def play(ctx, url:str):
+async def play(ctx, url: str):
     song_there = os.path.isfile("song.mp3")
-    try: 
+    try:
         if song_there:
             os.remove("song.mp3")
     except PermissionError:
@@ -42,12 +42,14 @@ async def play(ctx, url:str):
     voice.source = discord.PCMVolumeTransformer(voice.source)
     voice.source.volume = 0.45
 
+
 @bot.command()
 async def leave(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.is_connected():
-       await voice.disconnect()
-       await ctx.send ("Bot hat den Voicechannel Verlassen")
+        await voice.disconnect()
+        await ctx.send("Bot hat den Voicechannel Verlassen")
+
 
 @bot.command()
 async def duration(ctx):
@@ -55,7 +57,8 @@ async def duration(ctx):
     is_playing = True
     await asyncio.sleep(500)
     is_playing = False
-    await ctx.send ("Song Spielt Schon {duration}%")
+    await ctx.send("Song Spielt Schon {duration}%")
+
 
 @bot.command()
 async def pause(ctx):
@@ -66,8 +69,9 @@ async def pause(ctx):
     else:
         await ctx.send("Es wird gerade nichts Abgespielt")
 
+
 @bot.command()
-async def resume(ctx):  
+async def resume(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice.ispaused():
         voice.resume()
@@ -75,16 +79,18 @@ async def resume(ctx):
     else:
         await ctx.send("Nichts ist gerade pausiert")
 
+
 @bot.command()
 async def stop(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     voice.stop()
     await ctx.send("Song wurde Beendet")
 
+
 @bot.command(pass_context=True)
 async def guide(ctx):
     embed = discord.Embed(
-        colour = discord.Colour.blue()
+        colour=discord.Colour.blue()
     )
     embed.set_author(name='Verfügbare Commands')
     embed.add_field(name='!play [URL]', value='spielt ein ausgesuchtes Youtube Video', inline='false')
@@ -98,12 +104,14 @@ async def guide(ctx):
 
     await ctx.send(embed=embed)
 
+
 @bot.command()
 async def meme(ctx):
     content = get("https://meme-api.herokuapp.com/gimme").text
-    data = json.loads(content,)
-    meme = discord.Embed(title=f"{data['title']}", Color = discord.Color.random()).set_image(url=f"{data['url']}")
+    data = json.loads(content, )
+    meme = discord.Embed(title=f"{data['title']}", Color=discord.Color.random()).set_image(url=f"{data['url']}")
     await ctx.reply(embed=meme)
+
 
 @bot.command()
 async def volume(ctx, volume: int):
@@ -112,10 +120,12 @@ async def volume(ctx, volume: int):
     ctx.voice_client.source.volume = volume / 100
     await ctx.send(f"Meine Lautstärke ist jetzt {volume}%")
 
+
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='!guide für Hilfe'))
     print('Successfully Connected to Discord {0.user}'.format(bot))
+
 
 @bot.event
 async def on_message(message):
@@ -127,7 +137,8 @@ async def on_message(message):
 
     if message.content.lower() == 'bye':
         await message.channel.send(f'See you later, {message.author.display_name}!')
-    else: 
+    else:
         await bot.process_commands(message)
+
 
 bot.run(TOKEN)
